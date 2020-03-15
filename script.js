@@ -17,6 +17,33 @@ const dummyTransactions = [
 
 let transactions = dummyTransactions;
 
+// 设置addTransaction函数
+function addTransaction(e) {
+  e.preventDefault();
+
+  // 验证输入框是否为空
+  if (text.value.trim() === "" || amount.value.trim() === "") {
+    alert("请输入交易名称和金额");
+  } else {
+    const transaction = {
+      id: generateID(),
+      text: text.value,
+      amount: +amount.value
+    };
+    transactions.push(transaction);
+    addTransactionDOM(transaction);
+    updateValues();
+
+    text.value = "";
+    amount.value = "";
+  }
+}
+
+// 创建generateID
+function generateID(id) {
+  return Math.floor(Math.random() * 100000000);
+}
+
 // 添加transactions交易到DOM list中
 function addTransactionDOM(transaction) {
   // 获得金额前面到符号
@@ -31,7 +58,9 @@ function addTransactionDOM(transaction) {
   item.innerHTML = `
   ${transaction.text} <span>${sign}${Math.abs(
     transaction.amount
-  )}</span><button class="delete-btn">x</button>
+  )}</span><button class="delete-btn" onclick="removeTransaction(${
+    transaction.id
+  })">x</button>
   `;
 
   list.appendChild(item);
@@ -42,10 +71,11 @@ function updateValues() {
   // 通过map()获得交易金额数组
   const amounts = transactions.map(transaction => transaction.amount);
 
+  //   console.log(amounts);
   // reduce()方法得到余额
   const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(2);
 
-  //   filter()&reduce()得到收入
+  // filter()&reduce()得到收入
   const income = amounts
     .filter(item => item > 0)
     .reduce((acc, item) => (acc += item), 0)
@@ -62,6 +92,12 @@ function updateValues() {
   money_minus.innerText = `$${expense}`;
 }
 
+// 设置removeTransaction函数
+function removeTransaction(id) {
+  transactions = transactions.filter(transaction => transaction.id !== id);
+  init();
+}
+
 // 初始化应用
 function init() {
   list.innerHTML = "";
@@ -70,3 +106,6 @@ function init() {
 }
 
 init();
+
+// 事件监听
+form.addEventListener("submit", addTransaction);
