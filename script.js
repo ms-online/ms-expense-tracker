@@ -37,10 +37,36 @@ function addTransactionDOM(transaction) {
   list.appendChild(item);
 }
 
+// 更新余额，收入，支出的金额
+function updateValues() {
+  // 通过map()获得交易金额数组
+  const amounts = transactions.map(transaction => transaction.amount);
+
+  // reduce()方法得到余额
+  const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(2);
+
+  //   filter()&reduce()得到收入
+  const income = amounts
+    .filter(item => item > 0)
+    .reduce((acc, item) => (acc += item), 0)
+    .toFixed(2);
+
+  // filter()&reduce()得到收入
+  const expense = (
+    amounts.filter(item => item < 0).reduce((acc, item) => (acc += item), 0) *
+    -1
+  ).toFixed(2);
+
+  balance.innerText = `$${total}`;
+  money_plus.innerText = `$${income}`;
+  money_minus.innerText = `$${expense}`;
+}
+
 // 初始化应用
 function init() {
   list.innerHTML = "";
   transactions.forEach(addTransactionDOM);
+  updateValues();
 }
 
 init();
